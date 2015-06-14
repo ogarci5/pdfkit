@@ -48,10 +48,13 @@ class PDFKit
   def executable
     default = PDFKit.configuration.wkhtmltopdf
     return default if default !~ /^\// # its not a path, so nothing we can do
-    if File.exist?(default)
-      default
+    unless File.exist?(default)
+      default = default.split('/').last
+    end
+    if PDFKit.configuration.xvfb
+      ['xvfb-run', default].join(' ')
     else
-      default.split('/').last
+      default
     end
   end
 
